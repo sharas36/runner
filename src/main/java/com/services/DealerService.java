@@ -1,6 +1,5 @@
 package com.services;
 
-import com.entities.Dealer;
 import org.springframework.stereotype.Service;
 
 @Service

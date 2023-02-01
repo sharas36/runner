@@ -1,6 +1,5 @@
 package com.repositories;
 
-import com.entities.Dealer;
 import com.entities.Location;
 import org.springframework.data.repository.PagingAndSortingRepository;
 

@@ -27,6 +27,7 @@ public class Player implements Comparable<Player> {
     protected String password;
     private int points;
     private int ranking;
+    private Boolean isDealer;
 
     private int credit;
 

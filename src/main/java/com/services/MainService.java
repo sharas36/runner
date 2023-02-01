@@ -1,9 +1,5 @@
 package com.services;
 
-import com.entities.Dealer;
-import com.entities.Manager;
-import com.entities.Player;
-import com.entities.User;
 import com.repositories.*;
 import com.utilities.ClientType;
 import com.utilities.MyException;
