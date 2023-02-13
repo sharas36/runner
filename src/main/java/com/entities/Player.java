@@ -27,7 +27,7 @@ public class Player implements Comparable<Player> {
     protected String password;
     private int points;
     private int ranking;
-    private Boolean isDealer;
+    private Boolean isDealer = false;
 
     private int credit;
 
@@ -42,6 +42,10 @@ public class Player implements Comparable<Player> {
     public void addPrize(Prize prize){
         this.prizes.add(prize);
         this.credit -= prize.getPrice();
+    }
+
+    public void addCredit(int add){
+        this.setCredit(this.getCredit() + add);
     }
 
 

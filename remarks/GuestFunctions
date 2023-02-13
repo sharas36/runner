@@ -1,0 +1,15 @@
+register
+login
+getManager
+getPlayer
+getAllPlayers
+getPlayersByTournamentId
+getDealer
+getAllDealers
+getLocation
+getTournament
+getAllTournaments
+getTournamentsBetweenDates
+getTournamentsByPlayerId
+getTournamentsByLocation
+getTournamentsByManager

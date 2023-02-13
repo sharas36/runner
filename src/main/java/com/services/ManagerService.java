@@ -1,6 +1,7 @@
 package com.services;
 
 import com.entities.*;
+import com.repositories.PlayerRepository;
 import com.utilities.ClientType;
 import com.utilities.MyException;
 import org.springframework.data.domain.Page;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.sql.Date;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -25,7 +27,11 @@ public class ManagerService extends MainService{
         }
     }
 
-    public void addManager(String email, String password){
+    public void addManager(String email, String password) throws MyException {
+
+        if(!managerRepository.findByEmail(email).isEmpty()){
+            throw new MyException("this email is already exist");
+        }
         Manager manager = new Manager();
         manager.setEmail(email);
         manager.setPassword(password);
@@ -34,21 +40,32 @@ public class ManagerService extends MainService{
     }
 
     public void deleteManager(int managerId){
-        managerRepository.deleteById(managerId);
+        managerRepository.deleteManager(managerId);
     }
 
-    public void addDealer(String email, String password){
-        Dealer dealer = new Dealer();
+    public void updateManager(Manager manager){
+        managerRepository.save(manager);
+    }
+
+    public void addDealer(String email, String password) throws MyException {
+        if(!playerRepository.findByEmail(email).isEmpty()){
+            throw new MyException("this email is already exist");
+        }
+        Player dealer = new Player();
         dealer.setEmail(email);
         dealer.setPassword(password);
-        dealerRepository.save(dealer);
+        dealer.setIsDealer(true);
+        playerRepository.save(dealer);
     }
 
     public void deleteDealer(int dealerId){
-        dealerRepository.deleteById(dealerId);
+        playerRepository.deletePlayer(dealerId);
     }
 
-    public void addPlayer(String email, String password){
+    public void addPlayer(String email, String password) throws MyException {
+        if(!playerRepository.findByEmail(email).isEmpty()){
+            throw new MyException("this email is already exist");
+        }
         Player player = new Player();
         player.setEmail(email);
         player.setPassword(password);
@@ -56,7 +73,11 @@ public class ManagerService extends MainService{
     }
 
     public void deletePlayer(int playerId){
-        playerRepository.deleteById(playerId);
+        playerRepository.deletePlayer(playerId);
+    }
+
+    public void updatePlayer(Player player){
+        playerRepository.save(player);
     }
 
     public void addPrize(String name, int price, String description){
@@ -68,14 +89,22 @@ public class ManagerService extends MainService{
         prizeRepository.deleteById(prizeId);
     }
 
-    public void addTournament(LocalDateTime dateTime, String locationName, int price, int rebuyPrice, Manager manager){
-        Tournament tournament = Tournament.builder().manager(manager).dateTime(dateTime).location(locationRepository.findByLocationName(locationName)).price(price).
+    public void updatePrize(Prize prize){
+        prizeRepository.save(prize);
+    }
+
+    public void addTournament(LocalDateTime dateTime, String locationName, int price, int rebuyPrice){
+        Tournament tournament = Tournament.builder().dateTime(dateTime).location(locationRepository.findByLocationName(locationName)).price(price).
                 rebuyPrice(rebuyPrice).build();
         tournamentRepository.save(tournament);
     }
 
     public void deleteTournament(int tournamentId){
         tournamentRepository.deleteById(tournamentId);
+    }
+
+    public void updateTournament(Tournament tournament){
+        tournamentRepository.save(tournament);
     }
 
     public void addPlayerToTournament(int playerId, int tournamentId) throws MyException {
@@ -85,12 +114,14 @@ public class ManagerService extends MainService{
             throw new MyException("This player is already registered");
         }
         tournament.addPlayer(player);
+        player.addCredit(-tournament.getPrice());
+        playerRepository.save(player);
         tournamentRepository.save(tournament);
     }
 
     public void addDealerToTournament(int dealerId, int tournamentId) throws MyException {
         Tournament tournament = tournamentRepository.getById(tournamentId);
-        Dealer dealer = dealerRepository.getById(dealerId);
+        Player dealer = playerRepository.getById(dealerId);
         if(tournament.getDealers().contains(dealer)){
             throw new MyException("This dealer is already registered");
         }
@@ -108,30 +139,48 @@ public class ManagerService extends MainService{
 
     public void removeDealerFromTournament(int dealerId, int tournamentId){
         Tournament tournament = tournamentRepository.getById(tournamentId);
-        Dealer dealer = dealerRepository.getById(dealerId);
+        Player dealer = playerRepository.getById(dealerId);
         tournament.removeDealer(dealer);
         tournamentRepository.save(tournament);
     }
 
-    public void addPrizeToTournament(Prize prize, Tournament tournament){
-        tournament.addPrize(prize);
+    public void addPrizeToTournament(int tournamentId, int rank, int prize){
+        Tournament tournament = tournamentRepository.getById(tournamentId);
+        HashMap<Integer, Integer> prizes = tournament.getPrizes();
+        prizes.put(rank, prize);
         tournamentRepository.save(tournament);
     }
 
-    public void removePrizeFromTournament(Prize prize, Tournament tournament){
-        tournament.removePrize(prize);
+    public void removePrizeFromTournament(int tournamentId, int rank){
+        Tournament tournament = tournamentRepository.getById(tournamentId);
+        HashMap<Integer, Integer> prizes = tournament.getPrizes();
+        prizes.remove(rank);
         tournamentRepository.save(tournament);
     }
 
-    public Page<Tournament> getAllTournament(Pageable pageable){
-        return tournamentRepository.findAll(pageable);
+    public void addPlayerToPlayersInMoney(int tournamentId, Player player, int rank){
+        Tournament tournament = tournamentRepository.getById(tournamentId);
+        HashMap<Integer, Player> playerHashMap = tournament.getPlayersInMoney();
+        playerHashMap.put(rank, player);
+        tournamentRepository.save(tournament);
     }
 
-    public Page<Tournament> getNextTournaments(Pageable pageable){
-        return tournamentRepository.findByDateTimeAfter(LocalDateTime.now(), pageable);
+    public void removePlayerFromPlayersInMoney(int tournamentId, int rank){
+        Tournament tournament = tournamentRepository.getById(tournamentId);
+        HashMap<Integer, Player> playerHashMap = tournament.getPlayersInMoney();
+        playerHashMap.remove(rank);
+        tournamentRepository.save(tournament);
     }
 
-    public Page<Tournament> getPriviousTournaments(Pageable pageable){
-        return tournamentRepository.findByDateTimeBefore(LocalDateTime.now(), pageable);
+    public void closeTournament(int tournamentId){
+        Tournament tournament = tournamentRepository.getById(tournamentId);
+        HashMap<Integer, Integer> prizes = tournament.getPrizes();
+        HashMap<Integer, Player> playerHashMap = tournament.getPlayersInMoney();
+
+        prizes.forEach((rank, prize) -> {
+            playerHashMap.get(rank).addCredit(prize);
+        });
     }
+
+
 }

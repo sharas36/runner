@@ -11,8 +11,6 @@ import org.springframework.stereotype.Service;
 @Service
 public abstract class MainService {
 
-    @Autowired
-    protected DealerRepository dealerRepository;
 
     @Autowired
     protected ManagerRepository managerRepository;

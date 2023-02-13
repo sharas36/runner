@@ -10,6 +10,7 @@ import java.sql.Date;
 import java.sql.Time;
 import java.time.LocalDateTime;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 
 @Entity
@@ -46,14 +47,14 @@ public class Tournament {
 
     @ManyToMany(mappedBy = "tournaments", cascade = CascadeType.PERSIST)
     @JsonIgnore
-    private List<Dealer> dealers;
+    private List<Player> dealers;
 
-    @ManyToMany(mappedBy = "tournaments", cascade = CascadeType.PERSIST)
-    @JsonIgnore
-    private List<Prize> prizes;
+    private HashMap<Integer, Integer> prizes;
+
+    private HashMap<Integer, Player> playersInMoney;
 
 
-    public void addDealer(Dealer dealer){
+    public void addDealer(Player dealer){
         this.dealers.add(dealer);
     }
 
@@ -61,7 +62,7 @@ public class Tournament {
         this.players.add(player);
     }
 
-    public void removeDealer(Dealer dealer){
+    public void removeDealer(Player dealer){
         this.dealers.remove(dealer);
     }
 
@@ -69,11 +70,4 @@ public class Tournament {
         this.players.remove(player);
     }
 
-    public void addPrize(Prize prize){
-        this.prizes.add(prize);
-    }
-
-    public void removePrize(Prize prize){
-        this.prizes.remove(prize);
-    }
 }

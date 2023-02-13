@@ -33,8 +33,5 @@ public class Prize {
     @JsonIgnoreProperties("players")
     private List<Player> playersThatBuy;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JsonIgnore
-    private List<Tournament> tournaments;
 
 }

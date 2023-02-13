@@ -1,0 +1,17 @@
+addManager
+deleteManager
+updateManager
+addPlayer
+deletePlayer
+updatePlayer
+addDealer
+deleteDealer
+addPrize
+deletePrize
+updatePrize
+addTournament
+deleteTournament
+updateTournament
+addLocation
+deleteLocation
+updateLocation

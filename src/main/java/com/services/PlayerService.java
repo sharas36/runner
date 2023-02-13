@@ -27,12 +27,16 @@ public class PlayerService extends MainService{
             throw new MyException("You're already registered");
         }
         tournament.addPlayer(player);
+        player.addCredit(-tournament.getPrice());
+        playerRepository.save(player);
         tournamentRepository.save(tournament);
     }
 
     public void unregisterFromTournament(int tournamentId){
         Tournament tournament = tournamentRepository.getById(tournamentId);
         tournament.removePlayer(player);
+        player.addCredit(tournament.getPrice());
+        playerRepository.save(player);
         tournamentRepository.save(tournament);
     }
 

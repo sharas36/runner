@@ -21,6 +21,7 @@ public class Manager{
     @Id
     @GeneratedValue
     protected int id;
+
     protected String email;
     protected String firstName;
     protected String lastName;
