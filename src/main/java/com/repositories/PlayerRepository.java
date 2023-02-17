@@ -24,4 +24,6 @@ public interface PlayerRepository extends PagingAndSortingRepository<Player, Str
     @Modifying
     @Query(value = "select from players where is_dealer = true", nativeQuery = true)
     List<Player> getAllDealers();
+
+    Player getByEmail(String email);
 }

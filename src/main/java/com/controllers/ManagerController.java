@@ -27,14 +27,6 @@ public class ManagerController {
     @Autowired
     private TokenList tokenList;
 
-    @SneakyThrows
-    @PostMapping("/loginManager")
-    public String Login(@RequestBody String email,@RequestBody String password){
-        managerService.loginCheck(email, password);
-        Token token = new Token(email, password, ClientType.Manager);
-        tokenList.addToken(token);
-        return token.getToken();
-    }
 
     @SneakyThrows
     @PostMapping("/addTournament")

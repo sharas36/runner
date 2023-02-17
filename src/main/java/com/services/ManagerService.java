@@ -1,31 +1,15 @@
 package com.services;
 
 import com.entities.*;
-import com.repositories.PlayerRepository;
-import com.utilities.ClientType;
 import com.utilities.MyException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.sql.Date;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.HashMap;
-import java.util.List;
 
 @Service
 public class ManagerService extends MainService{
 
-    public void loginCheck(String email, String password) throws MyException {
-        if(managerRepository.findByEmail(email).isEmpty()){
-            throw new MyException("This email is not exist. Please try again");
-        }
-        Manager manager = managerRepository.getByEmail(email);
-        if(!manager.getPassword().equals(password)){
-            throw new MyException("Wrong Password");
-        }
-    }
 
     public void addManager(String email, String password) throws MyException {
 
